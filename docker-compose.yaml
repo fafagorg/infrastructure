@@ -8,18 +8,16 @@ services:
       - NODE_ENV=production
       - PORT=80
       - MONGO_HOSTNAME=${AUTH_MONGO_HOSTNAME}${DOMAIN_SUFFIX}
-      - MONGO_PORT=${MONGO_PORT}
-      - MONGO_DB=${MONGO_DB}
+      - MONGO_PORT=${AUTH_MONGO_PORT}
+      - MONGO_DB=${AUTH_MONGO_DB}
       - REDIS_HOSTNAME=${AUTH_REDIS_HOSTNAME}${DOMAIN_SUFFIX}
-      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PORT=${AUTH_REDIS_PORT}
       - PRODUCTS_HOSTNAME=${DOMAIN_PREFIX_PRODUCTS}${DOMAIN_SUFFIX}
       - REVIEWS_HOSTNAME=${DOMAIN_PREFIX_REVIEWS}${DOMAIN_SUFFIX}  
       - CLOUDINARY_CLOUD_NAME=
       - CLOUDINARY_NAME=
       - CLOUDINARY_API_KEY=
       - CLOUDINARY_API_SECRET=
-    ports:
-      - "80:80"
     networks:
       - auth_network
       fafago_network:
@@ -54,10 +52,8 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=80
-      - MONGO_PORT=${MONGO_PORT}
-      - MONGO_DB=${MONGO_DB}
-    ports:
-      - "80:80"
+      - MONGO_PORT=${PRODUCTS_MONGO_PORT}
+      - MONGO_DB=${PRODUCTS_MONGO_DB}
     networks:
       - products_network
       fafago_network:
