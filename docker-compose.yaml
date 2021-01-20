@@ -19,7 +19,7 @@ services:
       - CLOUDINARY_API_KEY=
       - CLOUDINARY_API_SECRET=
     networks:
-      - auth_network
+      auth_network:
       fafago_network:
         aliases:
           - ${DOMAIN_PREFIX_AUTH}${DOMAIN_SUFFIX}
@@ -55,7 +55,7 @@ services:
       - MONGO_PORT=${PRODUCTS_MONGO_PORT}
       - MONGO_DB=${PRODUCTS_MONGO_DB}
     networks:
-      - products_network
+      products_network:
       fafago_network:
         aliases:
           - ${DOMAIN_PREFIX_PRODUCTS}${DOMAIN_SUFFIX}
@@ -77,7 +77,7 @@ services:
     container_name: fafago-reviews-api
     image: fafagoreviews/reviews:dev
     networks:
-      - reviews_network
+      reviews_network:
       fafago_network:
         aliases:
           - ${DOMAIN_PREFIX_REVIEWS}${DOMAIN_SUFFIX}
@@ -116,7 +116,7 @@ services:
       - HOST_AUTH=${DOMAIN_PREFIX_AUTH}${DOMAIN_SUFFIX}
       - HOST_PRODUCT=${DOMAIN_PREFIX_PRODUCTS}${DOMAIN_SUFFIX}
     networks:
-      - ${DOMAIN_PREFIX_MESSENGER}${DOMAIN_SUFFIX}
+      messenger_network:
       fafago_network:
         aliases:
           - ${DOMAIN_PREFIX_MESSENGER}${DOMAIN_SUFFIX}
