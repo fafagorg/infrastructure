@@ -1,5 +1,4 @@
 version: "3.8"
-
 services:
   ##### Auth #####
   auth:
@@ -8,13 +7,13 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=80
-      - MONGO_HOSTNAME=${MONGO_HOSTNAME}
+      - MONGO_HOSTNAME=${AUTH_MONGO_HOSTNAME}${DOMAIN_SUFFIX}
       - MONGO_PORT=${MONGO_PORT}
       - MONGO_DB=${MONGO_DB}
-      - REDIS_HOSTNAME=${REDIS_HOSTNAME}
+      - REDIS_HOSTNAME=${AUTH_REDIS_HOSTNAME}${DOMAIN_SUFFIX}
       - REDIS_PORT=${REDIS_PORT}
-      - PRODUCTS_HOSTNAME=${PRODUCTS_HOSTNAME}
-      - REVIEWS_HOSTNAME${REVIEWS_HOSTNAME}
+      - PRODUCTS_HOSTNAME=${DOMAIN_PREFIX_PRODUCTS}${DOMAIN_SUFFIX}
+      - REVIEWS_HOSTNAME=${DOMAIN_PREFIX_REVIEWS}${DOMAIN_SUFFIX}  
       - CLOUDINARY_CLOUD_NAME=
       - CLOUDINARY_NAME=
       - CLOUDINARY_API_KEY=
@@ -25,7 +24,7 @@ services:
       - auth_network
       fafago_network:
         aliases:
-          - auth.fafago
+          - ${DOMAIN_PREFIX_AUTH}${DOMAIN_SUFFIX}
     mem_limit: 400m
     restart: 'unless-stopped'
   auth_mongo:
@@ -34,7 +33,7 @@ services:
     networks:
       auth_network:
         aliases:
-          - ${MONGO_HOSTNAME}
+          - ${AUTH_MONGO_HOSTNAME}${DOMAIN_SUFFIX}
     volumes:
       - 'auth_mongo_volume:/data/db'
     mem_limit: 600m
@@ -45,7 +44,7 @@ services:
     networks:
       auth_network:
         aliases:
-          - ${REDIS_HOSTNAME}
+          - ${AUTH_REDIS_HOSTNAME}${DOMAIN_SUFFIX}
     mem_limit: 600m
     restart: "unless-stopped"
   ##### Products #####
@@ -63,7 +62,7 @@ services:
       - products_network
       fafago_network:
         aliases:
-          - products.fafago
+          - ${DOMAIN_PREFIX_PRODUCTS}${DOMAIN_SUFFIX}
     mem_limit: 400m
     restart: 'unless-stopped'
   products_mongo:
@@ -72,7 +71,7 @@ services:
     networks:
       products_network:
         aliases:
-          - mongoproducts
+          - ${PRODUCTS_MONGO_HOSTNAME}${DOMAIN_SUFFIX}
     volumes:
       - 'products_mongo_volume:/data/db'
     mem_limit: 600m
@@ -85,16 +84,16 @@ services:
       - reviews_network
       fafago_network:
         aliases:
-          - reviews.fafago
+          - ${DOMAIN_PREFIX_REVIEWS}${DOMAIN_SUFFIX}
     environment:
       - PORT=80
-      - DB_SSL=${DB_SSL}
-      - DB_AUTH=${DB_AUTH}
-      - DB_SERVER=${DB_SERVER}
-      - DB_PORT=${DB_PORT}
-      - DB_NAME=${DB_NAME}
-      - ENVIRONMENT=${ENVIRONMENT}
-      - AUTH_URL=${AUTH_URL}
+      - DB_SSL=${REVIEWS_DB_SSL}
+      - DB_AUTH=${REVIEWS_DB_AUTH}
+      - DB_SERVER=${REVIEWS_MONGO_HOSTNAME}${DOMAIN_SUFFIX}
+      - DB_PORT=${REVIEWS_DB_PORT}
+      - DB_NAME=${REVIEWS_DB_NAME}
+      - ENVIRONMENT=${REVIEWS_ENVIRONMENT}
+      - AUTH_URL=${DOMAIN_PREFIX_AUTH}${DOMAIN_SUFFIX}
       - API_KEY_DEEPAI=${API_KEY_DEEPAI}
     mem_limit: 400m
     restart: 'unless-stopped'
@@ -104,7 +103,7 @@ services:
     networks:
       reviews_network:
         aliases:
-          - mongo_reviews
+          - ${REVIEWS_MONGO_HOSTNAME}${DOMAIN_SUFFIX}
     volumes:
       - 'reviews_mongo_volume:/data/db'
     mem_limit: 600m
@@ -116,15 +115,15 @@ services:
     environment:
       - NODE_ENV=production
       - APP_PORT=80
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
-      - HOST_AUTH=${HOST_AUTH}
-      - HOST_PRODUCT=${HOST_PRODUCT}
+      - REDIS_HOST=${MESSENGER_REDIS_HOSTNAME}${DOMAIN_SUFFIX}
+      - REDIS_PORT=${MESSENGER_REDIS_PORT}
+      - HOST_AUTH=${DOMAIN_PREFIX_AUTH}${DOMAIN_SUFFIX}
+      - HOST_PRODUCT=${DOMAIN_PREFIX_PRODUCTS}${DOMAIN_SUFFIX}
     networks:
-      - messenger_network
+      - ${DOMAIN_PREFIX_MESSENGER}${DOMAIN_SUFFIX}
       fafago_network:
         aliases:
-          - messenger.fafago
+          - ${DOMAIN_PREFIX_MESSENGER}${DOMAIN_SUFFIX}
     mem_limit: 400m
     restart: 'unless-stopped'
   messenger_redis:
@@ -133,7 +132,7 @@ services:
     networks:
       messenger_network:
         aliases:
-          - mongo_reviews
+          - ${MESSENGER_REDIS_HOSTNAME}${DOMAIN_SUFFIX}
     volumes:
       - 'messenger_redis_volume:/data' 
     mem_limit: 600m 
