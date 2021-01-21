@@ -54,6 +54,8 @@ services:
       - PORT=80
       - MONGO_PORT=${PRODUCTS_MONGO_PORT}
       - MONGO_DB=${PRODUCTS_MONGO_DB}
+      - HOST_AUTH=${DOMAIN_PREFIX_AUTH}${DOMAIN_SUFFIX}
+      - HOST_REVIEWS=${DOMAIN_PREFIX_REVIEWS}${DOMAIN_SUFFIX}
     networks:
       products_network:
       fafago_network:
@@ -135,11 +137,11 @@ services:
     restart: 'unless-stopped'
 
 networks:
+  fafago_network: null
   auth_network: null
   products_network: null
   reviews_network: null
   messenger_network: null
-  fafago_network: null
 
 volumes:
   auth_mongo_volume: null
