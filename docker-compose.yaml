@@ -1,6 +1,22 @@
 version: "3.8"
 services:
   ##### Auth #####
+  frontend:
+    container_name: fafago-fronted
+      image: 'fafagoauth/frontend:dev'
+      environment:
+        - NODE_ENV=production
+        - PORT=80
+        - REACT_APP_ENDPOINT_API_AUTH=${DOMAIN_PREFIX_AUTH}${DOMAIN_SUFFIX} 
+        - REACT_APP_ENDPOINT_API_PRODUCTS=${DOMAIN_PREFIX_PRODUCTS}${DOMAIN_SUFFIX}
+        - REACT_APP_ENDPOINT_API_REVIEWS=${DOMAIN_PREFIX_REVIEWS}${DOMAIN_SUFFIX} 
+        - REACT_APP_ENDPOINT_API_MESSENGER=${DOMAIN_PREFIX_MESSENGER}${DOMAIN_SUFFIX}
+      networks:
+        fafago_network:
+          aliases:
+            - ${DOMAIN_PREFIX_FRONTEND}${DOMAIN_SUFFIX}
+      mem_limit: 600m
+      restart: 'unless-stopped'
   auth:
     container_name: fafago-auth-api
     image: 'fafagoauth/auth:test'
