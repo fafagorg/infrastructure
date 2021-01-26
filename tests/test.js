@@ -1,6 +1,7 @@
 const assert = require('assert');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
+const nock = require('nock');
 const { exec } = require("child_process");
 chai.use(chaiHttp);
 
@@ -15,11 +16,12 @@ const productsURL = "http://localhost:8082/api/v1";
 const reviewsURL = "http://localhost:8083/api/v1";
 const messengerURL = "http://localhost:8084/api/v1";
 
-const testID = 28;
+const testID = 46;
 
 // Generated variables
 let productID;
 let token;
+let tokenReviewer;
 
 let testUser = {
   "username": "testUser" + testID,
@@ -48,15 +50,13 @@ let testProduct = {
 }
 
 let testReview = {
-  "title": "testTitle"+ testID,
+  "title": "testTitle" + testID,
   "score": "1",
   "description": "testDescription",
   "reviewerClientId": testUserReviewer.username,
   "reviewedProductId": productID,
   "reviewedClientId": testUser.username
 }
-
-
 
 
 
@@ -212,113 +212,93 @@ describe('Register user, create product, create review, get profile: ', () => {
       .post("/auth/register")
       .send(testUserReviewer)
       .then(response => {
-        // Create review using the previously created product, testUser and reviewer
-        chai.request(reviewsURL)
-          .post("/reviews")
-          .set('Authorization', token)
-          .send(testReview)
+        const loginObject = { username: testUserReviewer.username, password: testUserReviewer.password }
+        chai.request(authURL)
+          .post("/auth/login")
+          .send(loginObject)
           .then(response => {
-            // Check the response is successful
-            assert.strictEqual(response.status, 201, 'The review creation must be successful');
-
-            // GET reviews
+            tokenReviewer = response.body.token;
+            // Create review using the previously created product, testUser and reviewer
             chai.request(reviewsURL)
-              .get("/reviews")
+              .post("/reviews")
+              .set('Authorization', tokenReviewer)
+              .send(testReview)
               .then(response => {
                 // Check the response is successful
-                assert.strictEqual(response.status, 200, 'Should respond a 200');
+                assert.strictEqual(response.status, 201, 'The review creation must be successful');
 
-                let fetchedReview;
-                // Find Product 
-                for (const review of response.body) {
-                  if (review.title === testReview.title) {
-                    fetchedReview = review;
-                    break;
-                  }
-                }
-                assert.notStrictEqual(undefined, fetchedReview, "Couldn't find the inserted product.");
+                // GET reviews
+                chai.request(reviewsURL)
+                  .get("/reviews")
+                  .then(response => {
+                    // Check the response is successful
+                    assert.strictEqual(response.status, 200, 'Should respond a 200');
 
-                delete fetchedReview._id;
-                delete fetchedReview.__v;
-                delete fetchedReview.id;
+                    let fetchedReview;
+                    // Find Product 
+                    for (const review of response.body) {
+                      if (review.title === testReview.title) {
+                        fetchedReview = review;
+                        break;
+                      }
+                    }
+                    assert.notStrictEqual(undefined, fetchedReview, "Couldn't find the inserted product.");
 
-                //const reviewToCompare = { ...testReview }
+                    delete fetchedReview._id;
+                    delete fetchedReview.__v;
+                    delete fetchedReview.id;
 
-                assert.deepStrictEqual(fetchedReview, testReview, 'The product created should match the testProduct.');
+                    //const reviewToCompare = { ...testReview }
 
-                done();
+                    assert.deepStrictEqual(fetchedReview, testReview, 'The product created should match the testProduct.');
+
+                    done();
+                  }).catch(err => {
+                    console.log(err);
+                    done(err);
+                  });
               }).catch(err => {
-                console.log(err);
                 done(err);
               });
-          }).catch(err => {
-            done(err);
-          });
 
+          });
       });
 
 
   });*/
 
-  /*it('should compute agreement periods', (done) => {
+  it('should successfully delete user', (done) => {
     // Send to update points
-    chai.request(reporterURL)
-      .post('/contracts/' + testAgreement.id + '/createPointsFromPeriods')
-      .send({ periods: [{ from: "2020-04-27T00:00:00Z", to: "2020-04-27T23:59:00Z" }] })
+    chai.request(authURL)
+      .delete("/users/" + testUser.username)
+      .set("Authorization", token)
       .then(response => {
         // Check the response is successful
-        assert.strictEqual(response.status, 200, 'The points creation must end successful');
-        // Database check
-        setTimeout(() => {
-          influx.queryRaw('SELECT "guaranteeValue" FROM "autogen"."metrics_values" WHERE "agreement" = \'' + testAgreement.id + '\'').then(result => {
-            assert.deepStrictEqual(result.results,
-              [{ "statement_id": 0, "series": [{ "name": "metrics_values", "columns": ["time", "guaranteeValue"], "values": [["2020-04-27T00:00:00Z", 33.33333333333333]] }] }],
-              'The data in influx must be correct');
+        assert.strictEqual(response.status, 202, 'The DELETE request must be successful');
 
-            // Delete influx inserted points
-            influx.queryRaw('DROP SERIES FROM "metrics_values" WHERE "agreement" = \'' + testAgreement.id + '\'').then(() => {
-              // Check it was deleted
-              influx.queryRaw('SELECT "guaranteeValue" FROM "autogen"."metrics_values" WHERE "agreement" = \'' + testAgreement.id + '\'').then(result2 => {
-                assert.deepStrictEqual(result2, { "results": [{ "statement_id": 0 }] }, 'The data in influx must have been deleted');
-                // End this test
-                done();
-              }).catch(err => {
-                done(err);
-              });
+        // Check the user does not exist anymore
+        chai.request(authURL)
+          .get("/users/" + testUser.username)
+          .then(response => {
+            assert.strictEqual(response.status, 404, 'The user must no longer exist in the database');
+
+            // Check the product does not exist anymore
+            chai.request(productsURL)
+            .get("/products/client/" + testUser.username)
+            .then(response => {
+              assert.strictEqual(response.body, 'not found', 'The product must no longer exist in the database');
+              done();
             }).catch(err => {
               done(err);
             });
+            done()
           }).catch(err => {
             done(err);
           });
-        }, 3000);
       }).catch(err => {
         done(err);
       });
   });
-
-  it('should successfully delete the agreement', (done) => {
-    // Send to update points
-    chai.request(registryURL)
-      .delete("/agreements/" + testAgreement.id)
-      .then(response => {
-        // Check the response is successful
-        assert.strictEqual(response.status, 200, 'The DELETE request must be successful');
-
-        // Registry check
-        chai.request(registryURL)
-          .get("/agreements/" + testAgreement.id)
-          .then(response => {
-            // Check the agreement does not exist
-            assert.equal(response.status, 404, 'The agreement must no longer exist in the registry');
-            done();
-          }).catch(err => {
-            done(err);
-          });
-      }).catch(err => {
-        done(err);
-      });
-  });*/
 });
 
 /*after((done) => {

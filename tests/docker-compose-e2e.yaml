@@ -12,8 +12,8 @@ services:
       - MONGO_DB=fafago_user_db
       - REDIS_HOSTNAME=auth.redis
       - REDIS_PORT=6379
-      - PRODUCTS_HOSTNAME=products
-      - REVIEWS_HOSTNAME=reviews
+      - PRODUCTS_HOSTNAME=http://products
+      - REVIEWS_HOSTNAME=http://reviews
     networks:
       auth_network:
       fafago_network:
@@ -92,6 +92,7 @@ services:
       - DB_NAME=fafago_production
       - ENVIRONMENT=production
       - AUTH_URL=http://auth/api/v1
+      - API_KEY_DEEPAI=${API_KEY_DEEPAI}
     mem_limit: 400m
     restart: 'unless-stopped'
     ports:
@@ -117,7 +118,7 @@ services:
       - REDIS_HOST=messenger.redis
       - REDIS_PORT=6379
       - HOST_AUTH=auth
-      - HOST_PRODUCT=products
+      - HOST_PRODUCT=http://products
     networks:
       messenger_network:
       fafago_network:
