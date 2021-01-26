@@ -83,7 +83,7 @@ before((done) => {
       // Delete and check the agreement does not exist already
       setTimeout(() => {
         done();
-      }, 10000);
+      }, 20000);
     });
   });
 });
