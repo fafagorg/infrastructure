@@ -16,17 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Secret to env
-      run: API_KEY_DEEPAI=${{ secrets.API_KEY_DEEPAI }}
-    - name: Secret to env
-      run: export API_KEY_DEEPAI=${{ secrets.API_KEY_DEEPAI }}
-    - name: Secret to env 2
-      run: API_KEY_DEEPAI=${{ secrets.API_KEY_DEEPAI }}
-      env:
-        CI: true
-    - name: Secret to env 2
-      run: export API_KEY_DEEPAI=${{ secrets.API_KEY_DEEPAI }}
-      env:
-        CI: true
+      run: echo API_KEY_DEEPAI=${{secrets.API_KEY_DEEPAI}} >> tests/.env
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
