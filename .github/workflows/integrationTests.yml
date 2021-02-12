@@ -9,18 +9,14 @@ on:
 jobs:
   test:
     name: Install mocha and run tests (docker-compose up, mocha tests and docker-compose down)
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [14.x]
     steps:
     - uses: actions/checkout@v2
     - name: Secret to env
-      run: echo API_KEYDEEPAI=${{secrets.API_KEY_DEEPAI}} >> 'tests/.env'
-    - name: Secret to env
-      run: ls 'tests'
-    - name: Secret to env
-      run: cat 'tests/.env'     
+      run: echo API_KEY_DEEPAI=${{secrets.API_KEY_DEEPAI}} >> tests/.env    
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
