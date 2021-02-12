@@ -19,8 +19,7 @@ jobs:
       run: |
         pwd
         ls tests
-        touch tests/.env
-        echo API_KEY_DEEPAI=${{secrets.API_KEY_DEEPAI}} >> tests/.env
+        sudo echo API_KEY_DEEPAI=${{secrets.API_KEY_DEEPAI}} >> tests/.env
         ls tests
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
