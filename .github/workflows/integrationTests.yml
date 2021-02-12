@@ -15,14 +15,12 @@ jobs:
         node-version: [14.x]
     steps:
     - uses: actions/checkout@v2
-    - name: pwd
-      run: pwd
-    - name: ls tests 0
-      run: ls tests
     - name: Secret to env
-      run: echo API_KEY_DEEPAI=${{secrets.API_KEY_DEEPAI}} >> tests/.env
-    - name: ls tests
-      run: ls tests
+      run: |
+        pwd
+        ls tests
+        echo API_KEY_DEEPAI=${{secrets.API_KEY_DEEPAI}} >> tests/.env
+        ls tests
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
