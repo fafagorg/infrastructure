@@ -9,7 +9,7 @@ on:
 jobs:
   test:
     name: Install mocha and run tests (docker-compose up, mocha tests and docker-compose down)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     strategy:
       matrix:
         node-version: [14.x]
