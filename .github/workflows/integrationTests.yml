@@ -20,9 +20,7 @@ jobs:
     - name: ls tests 0
       run: ls tests
     - name: Secret to env
-      run: echo API_KEY_DEEPAI=${{secrets.API_KEY_DEEPAI}} >> tests/.env
-    - name: Secret to env
-      run: echo HOLA=123 >> tests/.env
+      run: echo API_KEY_DEEPAI=${{secrets.API_KEY_DEEPAI}} > ./tests/.env
     - name: ls tests
       run: ls tests
     - name: Use Node.js ${{ matrix.node-version }}
