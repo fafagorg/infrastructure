@@ -18,6 +18,8 @@ jobs:
     - name: Secret to env
       run: echo API_KEYDEEPAI=${{secrets.API_KEY_DEEPAI}} >> 'tests/.env'
     - name: Secret to env
+      run: ls 'tests'
+    - name: Secret to env
       run: cat 'tests/.env'     
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
