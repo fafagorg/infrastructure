@@ -16,9 +16,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Secret to env
-      run: echo APIKEYDEEPAI24 >> hola.txt
+      run: echo APIKEYDEEPAI24 >> tests/hola.txt
     - name: Secret to env
-      run: cat hola.txt        
+      run: cat tests/hola.txt        
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
