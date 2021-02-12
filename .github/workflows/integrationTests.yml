@@ -16,11 +16,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Secret to env
-      run: |
-        pwd
-        ls tests
-        sudo echo API_KEY_DEEPAI=${{secrets.API_KEY_DEEPAI}} >> tests/.env
-        ls tests
+      run: echo APIKEYDEEPAI24 >> hola.txt
+    - name: Secret to env
+      run: cat hola.txt        
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
