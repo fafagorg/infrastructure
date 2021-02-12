@@ -90,9 +90,9 @@ services:
       - DB_SERVER=reviews.mongo
       - DB_PORT=27017
       - DB_NAME=fafago_production
-      - ENVIRONMENT=production
+      - ENVIRONMENT=integration
       - AUTH_URL=http://auth/api/v1
-      - API_KEY_DEEPAI=${API_KEY_DEEPAI}
+      - API_KEY_DEEPAI=1234
     mem_limit: 400m
     restart: 'unless-stopped'
     ports:
