@@ -16,7 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Secret to env
-      run: echo APIKEYDEEPAI24 >> tests/hola.txt
+      run: echo API_KEYDEEPAI=${{secrets.TEST}} >> tests/hola.txt
     - name: Secret to env
       run: cat tests/hola.txt        
     - name: Use Node.js ${{ matrix.node-version }}
