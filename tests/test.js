@@ -70,16 +70,7 @@ before((done) => {
     } else {
       console.log(`stdout: ${stdout}`);
     }
-    exec("cat ./tests/.env" , (error1, stdout1, stderr1) => {
-      if (error1) {
-        console.log(`error: ${error1.message}`);
-        done(error1);
-      } else if (stderr) {
-        console.log(`stderr: ${stderr1}`);
-      } else {
-        console.log(`stdout: ${stdout1}`);
-      }
-    });
+    
     exec("docker-compose --env-file ./tests/.env -f ./tests/docker-compose-integration.yaml up -d", (error1, stdout1, stderr1) => {
       if (error1) {
         console.log(`error: ${error1.message}`);
